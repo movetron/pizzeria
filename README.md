@@ -1,3 +1,19 @@
+Ссылка на деплой проекта: https://pizzeria-5s5l19mf3-mishas-projects-bb0245a8.vercel.app/
+
+Технологии:
+ReactJS 18
+TypeScript
+Redux Toolkit (хранение данных / пицц)
+React Router v6 (навигация)
+Axios + Fetch (отправка запроса на бэкенд)
+React Hooks (хуки)
+Prettier (форматирование кода)
+CSS-Modules / SCSS (стилизация)
+React Content Loader (скелетон)
+React Pagination (пагинация)
+Lodash.Debounce
+Code Splitting, React Loadable, useWhyDidYouUpdate
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
