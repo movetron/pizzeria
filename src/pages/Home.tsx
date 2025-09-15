@@ -1,25 +1,21 @@
 import React from 'react';
-import Categories from '../components/Categories';
-import Sort, { sortList } from '../components/Sort';
-import PizzaBlock from '../components/PizzaBlcok';
-import Skeleton from '../components/PizzaBlcok/Skeleton';
-import Pagination from '../components/Pagination';
+import { sortList } from '../components/Sort';
 
-import {
-  selectFilter,
-  setCategoryId,
-  setCurrentPage,
-  setFilters,
-} from '../redux/slices/filterSlice';
+import { Categories, Sort, Skeleton, PizzaBlock, Pagination } from '../components';
 import { useSelector, useDispatch } from 'react-redux';
 
 import qs from 'qs';
 import { useNavigate } from 'react-router-dom';
-import { fetchPizzas, selectPizzaData } from '../redux/slices/pizzaSlice';
+import { useAppDispatch } from '../redux/store';
+import { setCategoryId, setCurrentPage, setFilters } from '../redux/filter/slice';
+import { selectFilter } from '../redux/filter/seletors';
+import { selectPizzaData } from '../redux/pizza/selectors';
+import { fetchPizzas } from '../redux/pizza/asyncAction';
+import { SearchPizzaParams } from '../redux/pizza/slice';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const isSearch = React.useRef(false);
   const isMounted = React.useRef(false);
@@ -31,9 +27,9 @@ const Home: React.FC = () => {
 
   //   const [currentPage, setCurrentPage] = React.useState(1);
 
-  const onChangeCategory = (id: number) => {
+  const onChangeCategory = React.useCallback((id: number) => {
     dispatch(setCategoryId(id));
-  };
+  }, []);
   const onChangePage = (page: number) => {
     dispatch(setCurrentPage(page));
   };
@@ -70,13 +66,12 @@ const Home: React.FC = () => {
     //   });
 
     dispatch(
-      //@ts-ignore
       fetchPizzas({
         sortBy,
         order,
         category,
         search,
-        currentPage,
+        currentPage: String(currentPage),
       }),
     );
 
@@ -89,31 +84,35 @@ const Home: React.FC = () => {
 
     // если был первый рендер
     if (isMounted.current) {
-      const queryString = qs.stringify({
+      const params = qs.stringify({
         sortProperty: sort.sortProperty,
         categoryId,
         currentPage,
       });
-
+      const queryString = qs.stringify(params, { skipNulls: true });
       navigate(`?${queryString}`);
     }
-    isMounted.current = true;
-  }, [categoryId, sort.sortProperty, currentPage]);
+    if (!window.location.search) {
+      dispatch(fetchPizzas({} as SearchPizzaParams));
+    }
+  }, [categoryId, sort.sortProperty, searchValue, currentPage]);
 
   //есть ли в url параметра
   //если был первый рендер, то проверяем url памаметры и сохраняем в редаксе. На второй рендер будет true и действие выполниться
   React.useEffect(() => {
     if (window.location.search) {
-      const params = qs.parse(window.location.search.substring(1)); //substring(1) - убираем вопросительный знак в начале
-      const sort = sortList.find((obj) => obj.sortProperty == params.sortProperty);
+      const params = qs.parse(window.location.search.substring(1)) as unknown as SearchPizzaParams; //substring(1) - убираем вопросительный знак в начале
+      const sort = sortList.find((obj) => obj.sortProperty == params.sortBy);
       dispatch(
         setFilters({
-          ...params,
-          sort,
+          searchValue: params.search,
+          categoryId: Number(params.category),
+          currentPage: Number(params.currentPage),
+          sort: sort || sortList[0],
         }),
       );
-      isSearch.current = true;
     }
+    isSearch.current = true;
   }, []);
 
   // Если был первый рендер, то запрашиваем пиццы
@@ -131,7 +130,7 @@ const Home: React.FC = () => {
     <div className="container">
       <div className="content__top">
         <Categories value={categoryId} onChangeCategory={onChangeCategory} />
-        <Sort />
+        <Sort value={sort} />
       </div>
       <h2 className="content__title">Все пиццы</h2>
       {status === 'error' ? (

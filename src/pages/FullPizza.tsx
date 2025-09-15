@@ -1,8 +1,9 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const FullFizza = () => {
+const FullPizza = () => {
   const [pizza, setPizza] = React.useState<{
     imageUrl: string;
     title: string;
@@ -35,7 +36,13 @@ const FullFizza = () => {
       <img className="pizza-block__image" src={`/${pizza.imageUrl}`} alt="" />
       <h2>{pizza.title}</h2>
       <h4>{pizza.price} ₽</h4>
+      <Link to="/">
+        <button className="button button--outline button--add">
+          <span>Назад</span>
+        </button>
+      </Link>
     </div>
   );
 };
-export default FullFizza;
+
+export default FullPizza;

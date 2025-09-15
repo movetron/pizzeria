@@ -3,11 +3,25 @@ import logoHeader from '../assets/img/pizza-logo.svg';
 import { Link, useLocation } from 'react-router-dom';
 import Search from './Search';
 import { useSelector } from 'react-redux';
-import { selectCart } from '../redux/slices/cartSlice';
+import { selectCart } from '../redux/cart/selectors';
 
 function Header() {
-  const { totalPrice, totalCount } = useSelector(selectCart);
+  const { totalPrice, totalCount, items } = useSelector(selectCart);
   const location = useLocation();
+  //если первый рендер(первый раз отоброзился) то не сохронять
+  const isMounted = React.useRef(false);
+
+  React.useEffect(() => {
+    //при первом ренедре не сохроняем
+    //этот компонент не отрендорился, то не вызывай этот код
+    //если компонент отрендорился, то значит я меняю корзину и вызывай сохранение
+    if (isMounted.current) {
+      const json = JSON.stringify(items);
+      localStorage.setItem('cart', json);
+    }
+    //если не отрендрился, то скажи что он отрендорился и второй раз useEffect вызовится, в if будет true и код вызовится
+    isMounted.current = true;
+  }, [items]);
 
   return (
     <div className="header">
@@ -21,7 +35,7 @@ function Header() {
             </div>
           </div>
         </Link>
-        <Search />
+        {location.pathname !== '/cart' && <Search />}
         <div className="header__cart">
           {location.pathname !== '/cart' && (
             <Link to="/cart" className="button button--cart">
