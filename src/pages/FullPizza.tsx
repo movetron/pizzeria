@@ -28,7 +28,7 @@ const FullPizza = () => {
 
   //если пицца не загрузилась(undefined), не рендери разметку
   if (!pizza) {
-    return 'Загрузка...';
+    return <div>Загрузка...</div>;
   }
 
   return (
