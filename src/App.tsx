@@ -7,9 +7,24 @@ import Home from './pages/Home';
 import { Route, Routes } from 'react-router-dom';
 import MainLayout from './layouts/MainLayout';
 
-const Cart = React.lazy(() => import(/* webpackChunkName: "Cart" */ './pages/Cart'));
-const FullPizza = React.lazy(() => import(/* webpackChunkName: "FullPizza" */ './pages/FullPizza'));
-const NotFound = React.lazy(() => import(/* webpackChunkName: "NotFound" */ './pages/NotFound'));
+const Cart = React.lazy(
+  () =>
+    import(/* webpackChunkName: "Cart" */ './pages/Cart') as Promise<{
+      default: React.ComponentType<any>;
+    }>,
+);
+const FullPizza = React.lazy(
+  () =>
+    import(/* webpackChunkName: "FullPizza" */ './pages/FullPizza') as Promise<{
+      default: React.ComponentType<any>;
+    }>,
+);
+const NotFound = React.lazy(
+  () =>
+    import(/* webpackChunkName: "NotFound" */ './pages/NotFound') as Promise<{
+      default: React.ComponentType<any>;
+    }>,
+);
 
 function App() {
   return (
