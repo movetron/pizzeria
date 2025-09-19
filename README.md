@@ -1,3 +1,5 @@
+<img width="1920" height="956" alt="pizzeria" src="https://github.com/user-attachments/assets/480e009f-fe8f-4628-9b93-4458b4f1c3a0" />
+
 Ссылка на деплой проекта: https://pizzeria-5s5l19mf3-mishas-projects-bb0245a8.vercel.app/
 
 Технологии:
